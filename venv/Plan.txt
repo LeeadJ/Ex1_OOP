@@ -32,7 +32,7 @@ Class:
     1) call_time(curr_elevator, curr_call): {return total_time}
         - recieves an elevator and a call.
         - return total time from the pickup on src to drop off on dest
-    2) adjustTime(self, added_call):{VOID}
+    2) added_call_time_Adjuster(self, added_call):{VOID}
         - This function recieves a call and adjust the elevator dictionary timestamp accordingly.
         - If the elevator is UP, the call origin floor in the dictionary is set to the call origin.timestamp,
           and adds to each floor the amount of time according to the elevator preformance.
