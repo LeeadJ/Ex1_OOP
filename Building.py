@@ -36,8 +36,6 @@ class Building:
         return self.ElevatorList[index]
 
 
-
-
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # b1 = r"C:\Users\Leead\Desktop\Ex1_csv\Ex1_Buildings\B1.json"
@@ -47,4 +45,3 @@ class Building:
 # b5 = r"C:\Users\Leead\Desktop\Ex1_csv\Ex1_Buildings\B5.json"
 # b = Building(b1)
 # print(b.__str__())
-
