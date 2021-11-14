@@ -1,0 +1,56 @@
+Class:
+1) Building(json):
+    1. The __init__ receives a JSON file and extracts the key values:
+        - Minimum Floor.
+        - Maximum Floor.
+        - elevator list.
+        - Number of elevators.
+    2) The class contains an elevator list:
+        - Each index contains an elevator(imported from class - elevator).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+2) Elevator():
+    1. The __init__ receives information from the Building class and initializes an elevator:
+            - Elevator ID (index in the elevator-list)
+            - Elevator Speed
+            - Minimum floor of the elevator.
+            - Maximum floor of the elevator.
+            - Door closing time.
+            - Door opening time.
+            - Start time (time until the elevator reaches full speed).
+            - Stop time (time until elevator reaches a complete stop)
+    2. The __init__ also contains a Call-List.
+            - The call list will hold the upcoming calls the elevator need to attend to.
+            - Every index represents a call.
+            - Each calls will be in ascending order, according to their timestamps. *****************
+    3. The __init__ also contains a Finish-Time.
+            - The Finish-time will update itself according to the last call in the call-list.
+            - The algorithm will know to choose an elevator according the their Finish-timestamp.
+    4. The __init__ also contains a Floor Timestamp dictionary (key='floor number'(int) : value='timestamp(float)).
+            - This dictionary allows us to see what the timestamp of the elevator at each floor.
+            - This will help us determine if to add a call to the elevator call list.
+    Function:
+    1) call_time(curr_elevator, curr_call): {return total_time}
+        - recieves an elevator and a call.
+        - return total time from the pickup on src to drop off on dest
+    2) adjustTime(self, added_call):{VOID}
+        - This function recieves a call and adjust the elevator dictionary timestamp accordingly.
+        - If the elevator is UP, the call origin floor in the dictionary is set to the call origin.timestamp,
+          and adds to each floor the amount of time according to the elevator preformance.
+    3) get_floorTimestamp(self, floor):{return floor timestamp}
+        - This function returns the time-stamp of a given floor.
+        - If the floor is not in the range an exception will be thrown.
+    4) is_call_relevant(self, call):{returns boolean}
+        - This function checks if the call timestamp is smaller or equal to the timestamp of the floor origin in the
+          elevator dictionary.
+        - Returns true or false.
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+3)Calls(csv):
+    Here the initializer will receive a list from the call list.
+    - The list will represent a single call.
+    - Each index of the list will represent a certain value from the call (0-5)
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+4) Time Library:
+    4.1) This library will place all the time static functions in order to calculate the best elevator.
+        Function:
+        1) timeStamp_at_floor(curr_elevator, floor): {return time-stamp at given floor}
+            - Uses the elevator floor time=stamp dictionary.
