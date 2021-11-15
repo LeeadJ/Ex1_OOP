@@ -1,3 +1,12 @@
+Algorithm:
+1. First we get a Call csv.
+2. We loop through the call, and run by each call.
+3. Check if the call is UP or DOWN. Deppending on which state we run through the csv and check which calls are relevant according
+   to the timeStamp and state. (Id the elevator is now in the same direction as the call or the call timestamp is greater than
+   the elevator floor timestamp - the call is irelevant.)
+4. When finishing the loop, every call's elevator index that is different from -1, gets moved to an outputfile.
+5. When finishing all the calls, we will sort the output file according to the timestamp.
+
 Class:
 1) Building(json):
     1. The __init__ receives a JSON file and extracts the key values:
@@ -5,7 +14,7 @@ Class:
         - Maximum Floor.
         - elevator list.
         - Number of elevators.
-    2) The class contains an elevator list:
+    2) The index contains an elevator list:
         - Each index contains an elevator(imported from class - elevator).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 2) Elevator():
@@ -28,29 +37,62 @@ Class:
     4. The __init__ also contains a Floor Timestamp dictionary (key='floor number'(int) : value='timestamp(float)).
             - This dictionary allows us to see what the timestamp of the elevator at each floor.
             - This will help us determine if to add a call to the elevator call list.
-    Function:
-    1) call_time(curr_elevator, curr_call): {return total_time}
+    Functions:
+    1) src2dest_time(curr_elevator, curr_call): {return total_time}
         - recieves an elevator and a call.
         - return total time from the pickup on src to drop off on dest
     2) added_call_time_Adjuster(self, added_call):{VOID}
         - This function recieves a call and adjust the elevator dictionary timestamp accordingly.
         - If the elevator is UP, the call origin floor in the dictionary is set to the call origin.timestamp,
           and adds to each floor the amount of time according to the elevator preformance.
-    3) get_floorTimestamp(self, floor):{return floor timestamp}
+    3) add_default_time(self, call_dest, call_src) {VOID}
+        - This function updates the elevator dictionary timestamp from the floors after the call destination.
+    4) get_floorTimestamp(self, floor):{return floor timestamp}
         - This function returns the time-stamp of a given floor.
         - If the floor is not in the range an exception will be thrown.
-    4) is_call_relevant(self, call):{returns boolean}
-        - This function checks if the call timestamp is smaller or equal to the timestamp of the floor origin in the
+    5) is_call_relevant(self, call):{returns boolean}
+        - This function checks if the call timestamp is smaller or equal to the timestamp of the elevator at the floor
+          of the call.
           elevator dictionary.
         - Returns true or false.
+    6) is_elevator_UP(self) {boolean}
+        - rRturns true if the time-stamp at maxfloor is greater than the time-stamp at maxfloor -1
+    7) adjust_time_for_new_direction(call)
+        - The calls are sorted. If we get a call that has a timestamp greater than the the timestamp of the elevator at the
+          max floor (or minfloor), it meant the elevator need to update it's timestamp in a DOWN (or UP) direction.
+        - This function will get a call and update the timestamp according to the direction.
+    Functions2
+    1) src2dest_time(curr_elevator, curr_call): {return total_time}
+        - recieves an elevator and a call.
+        - return total time from the pickup on src to drop off on dest
+    2) time_range() {return time}
+        - This function loops through the floor timestamp of an elevator.
+        - At each floor the function returns a time range possible for a call to be taken.
+        - At each floor the function will calculate the stop, close door/open and start time.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 3)Calls(csv):
     Here the initializer will receive a list from the call list.
     - The list will represent a single call.
     - Each index of the list will represent a certain value from the call (0-5)
+
+    Functions:
+    1) is_UP_Call() {boolean}
+        - Returns true if the dest floor is greater than the origin floor (GoingUP)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 4) Time Library:
     4.1) This library will place all the time static functions in order to calculate the best elevator.
         Function:
         1) timeStamp_at_floor(curr_elevator, floor): {return time-stamp at given floor}
             - Uses the elevator floor time=stamp dictionary.
+
+
+
+***
+After creating the adjuster for the elevator, the time updated itself until the last floor.
+What happens if at floor 10 the time is 134 and i get a call wanting to go down(or up) past that time. (ex call at 145).
+- I now need to ask if the call is after the finish time.
+- Because the list is pre-sorted, I now know that the next call is the next one up.
+- I need to switch the direction of the elevator and adjust the time accordingly.
+- If the call is DOWN and the timestamp is greater than the finish timestamp of the elevator, I know the elevator is going up.
+    I know now to add the labor time from the max-floor until the call origin floor and pick up the DOWN call.

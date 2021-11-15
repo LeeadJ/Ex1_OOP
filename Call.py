@@ -14,5 +14,9 @@ class Call:
         self.elevatorIndex = int(csv_file_list[5])
 
 
+    def is_Up_call(self):
+        return self.destFloor > self.originFloor
+
+
     def __str__(self):
         return self.stam_str, self.timeStamp, self.originFloor, self.destFloor, self.status, self.elevatorIndex
