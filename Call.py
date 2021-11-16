@@ -6,16 +6,18 @@ class Call:
     """
 
     def __init__(self, csv_file_list):
-        self.stam_str = str(csv_file_list[0])
-        self.timeStamp = float(csv_file_list[1])
-        self.originFloor = int(csv_file_list[2])
-        self.destFloor = int(csv_file_list[3])
-        self.status = int(csv_file_list[4])
-        self.elevatorIndex = int(csv_file_list[5])
-
-
-    def is_Up_call(self):
-        return self.destFloor > self.originFloor
+        self.stam_str = str(csv_file_list.values[0])
+        self.timeStamp = float(csv_file_list.values[1])
+        self.originFloor = int(csv_file_list.values[2])
+        self.destFloor = int(csv_file_list.values[3])
+        self.status = int(csv_file_list.values[4])
+        self.elevatorIndex = int(csv_file_list.values[5])
+        # self.stam_str = str(csv_file_list[0])
+        # self.timeStamp = float(csv_file_list[1])
+        # self.originFloor = int(csv_file_list[2])
+        # self.destFloor = int(csv_file_list[3])
+        # self.status = int(csv_file_list[4])
+        # self.elevatorIndex = int(csv_file_list[5])
 
 
     def __str__(self):

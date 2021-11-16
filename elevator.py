@@ -27,7 +27,7 @@ This is the Elevator class:
 class elevator:
     def __init__(self, id, speed, minFloor, maxFloor, closetime, opentime, starttime, stoptime):
         self.id = int(id)
-        self.speed = float(speed)
+        self.speed = 1/float(speed)
         self.minFloor = int(minFloor)
         self.maxFloor = int(maxFloor)
         self.closetime = float(closetime)
@@ -43,24 +43,21 @@ class elevator:
         self.floor_timestamp_dict = {index: x for index, x in enumerate([0.0] * self.total_floors, start=self.minFloor)}
 
     '''This function adds a call to the elevator call list. It also updates the "Call amount" and "time-Adjuster.'''
-
     def addCall(self, call):
-        self.callList.append(call)
-        self.callAmount = len(self.callList)
-        self.added_call_time_Adjuster(call)
+        stop_time = self.stoptime + self.opentime
+        if not self.callList:  # call is a FIRST call
+            self.added_call_time_Adjuster(call)
+            self.callList.append(call)
+            self.callAmount += 1
+        else:
+            if self.is_in_Range(call):  # The call is in sup range
+                self.callList.append(call)
+                self.callAmount += 1
+                self.floor_timestamp_dict[call.originFloor] += stop_time
+                call.timeStamp = self.floor_timestamp_dict[call.originFloor] + stop_time
+                self.added_call_time_Adjuster(call)
 
-    '''This function calculates the absolute time to finish a call(given an elevator and call).'''
 
-    def src2dest_time(self, curr_call):
-        # start_time = curr_call.timeStamp
-        total_floors = abs(curr_call.destFloor - curr_call.originFloor)
-        total_time = (total_floors * self.speed) + self.labor_time
-        return total_time
-
-    '''This function calculates the absolute time from the created call until the destination.'''
-
-    def call2dest_time(self, curr_call):
-        pass
 
     '''This function adjusts the time-stamp dictionary according to the call.'''
 
@@ -68,33 +65,45 @@ class elevator:
         call_src = added_call.originFloor
         call_dest = added_call.destFloor
         stop_time = self.stoptime + self.opentime + self.speed
-        floors = abs(call_dest - call_src)
         start_time = self.starttime + self.closetime + self.speed
+        floors = abs(call_dest - call_src)
         self.floor_timestamp_dict[call_src] = added_call.timeStamp
-        if added_call.is_Up_call:  # UP call
+        if added_call.status == 1:  # UP call
             self.floor_timestamp_dict[call_src + 1] = self.floor_timestamp_dict[call_src] + start_time
             if floors == 1:
                 self.floor_timestamp_dict[call_src + 1] += (stop_time - self.speed)
+                if call_dest != self.maxFloor:
+                    self.add_default_time(call_dest, call_src)
             elif floors > 3:
                 for i in range(call_src + 2, call_dest):
                     self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i - 1] + self.speed
                 self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+                if call_dest != self.maxFloor:
+                    self.add_default_time(call_dest, call_src)
             else:
                 self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+                if call_dest != self.maxFloor:
+                    self.add_default_time(call_dest, call_src)
             if call_dest != self.maxFloor:
                 self.add_default_time(call_dest, call_src)
         else:  # DOWN call
             self.floor_timestamp_dict[call_src - 1] = self.floor_timestamp_dict[call_src] + start_time
             if floors == 1:
                 self.floor_timestamp_dict[call_src - 1] += (stop_time - self.speed)
+                if call_dest != self.minFloor:
+                    self.add_default_time(call_dest, call_src)
             elif floors > 3:
                 for i in range(call_src - 2, call_dest, -1):
                     self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
                 self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
+                if call_dest != self.minFloor:
+                    self.add_default_time(call_dest, call_src)
             else:
                 self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
-            if call_dest != self.minFloor:
                 self.add_default_time(call_dest, call_src)
+                if call_dest != self.minFloor:
+                    self.add_default_time(call_dest, call_src)
+
 
     '''This function adjust the elevator time after the call reached its destination, until it reaches the maximum or
      minimum floor. '''
@@ -109,23 +118,11 @@ class elevator:
             self.floor_timestamp_dict[self.maxFloor] = self.floor_timestamp_dict[self.maxFloor - 1] + stop_time
         else:  # elevator going DOWN
             self.floor_timestamp_dict[call_dest - 1] = self.floor_timestamp_dict[call_dest] + start_time
-            for i in range(call_dest - 2, self.minFloor):
+            for i in range(call_dest - 2, self.minFloor,-1):
                 self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
             self.floor_timestamp_dict[self.minFloor] = self.floor_timestamp_dict[self.minFloor + 1] + stop_time
 
-    def addCall2(self, call):
-        stop_time = self.stoptime + self.opentime
-        if not self.callList:  # call is a FIRST call
-            self.added_call_time_Adjuster(call)
-            self.callList.append(call)
-            self.callAmount += 1
-        else:
-            if self.is_in_Range(call):  # The call is in sup range
-                self.callList.append(call)
-                self.callAmount += 1
-                self.floor_timestamp_dict[call.originFloor] += stop_time
-                call.timeStamp = self.floor_timestamp_dict[call.originFloor] + stop_time
-                self.added_call_time_Adjuster(call)
+
 
     def is_in_Range(self, call):
         stop_time = self.stoptime + self.opentime
