@@ -12,12 +12,6 @@ class Call:
         self.destFloor = int(csv_file_list[3])
         self.status = int(csv_file_list[4])
         self.elevatorIndex = int(csv_file_list[5])
-        # self.stam_str = str(csv_file_list[0])
-        # self.timeStamp = float(csv_file_list[1])
-        # self.originFloor = int(csv_file_list[2])
-        # self.destFloor = int(csv_file_list[3])
-        # self.status = int(csv_file_list[4])
-        # self.elevatorIndex = int(csv_file_list[5])
 
 
     def __str__(self):

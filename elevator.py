@@ -50,6 +50,7 @@ class elevator:
             stop_time = self.stoptime + self.opentime + self.closetime
         return call.timeStamp <= self.floor_timestamp_dict[call.originFloor] + stop_time
 
+
     def addCall(self, call):
         if not self.callList:  # call is a FIRST call
             self.added_call_time_Adjuster(call)
@@ -64,7 +65,7 @@ class elevator:
                 else:
                     stop_time = self.stoptime + self.opentime + self.closetime
                 self.floor_timestamp_dict[call.originFloor] += stop_time
-                call.timeStamp = self.floor_timestamp_dict[call.originFloor] + stop_time
+                # call.timeStamp = self.floor_timestamp_dict[call.originFloor]
                 self.added_call_time_Adjuster(call)
 
     '''This function adjusts the time-stamp dictionary according to the call.'''
@@ -131,55 +132,9 @@ class elevator:
 
 
 
-        # def is_in_range(self, call_list, call_src, status):
-
-    #     if status == 1:
-    #         call_up = df_up(call_list)
-    #         for(i in range(1, len(call_up))):
-
-    # Need to adjust the call timestamp as the starting point.
-    # total_time = self.src2dest_time(added_call)
-    # total_floors = abs(added_call.destFloor - added_call.originFloor)
-    # time_to_add = total_time / total_floors
-    # counter = 1
-    # if added_call.is_Up_call():  # call going UP
-    #     self.floor_timestamp_dict[added_call.originFloor] = added_call.timeStamp
-    #     for i in range(added_call.originFloor + 1, added_call.destFloor + 1):
-    #         self.floor_timestamp_dict[i] = added_call.timeStamp + (time_to_add * counter)
-    #         counter += 1
-    #     self.default_time_adjuster(added_call)
-    #     self.finish_timestamp = self.floor_timestamp_dict[self.maxFloor]
-    # else:  # call going DOWN
-    #     self.floor_timestamp_dict[added_call.originFloor] = added_call.timeStamp
-    #     for i in range(added_call.originFloor - 1, added_call.destFloor - 1, -1):
-    #         self.floor_timestamp_dict[i] = (time_to_add * counter) + added_call.timeStamp
-    #         counter += 1
-    #     self.default_time_adjuster(added_call)
-    #     self.finish_timestamp = self.floor_timestamp_dict[self.minFloor]
 
     '''This function adjust the elevator time after the call reached its destination, until it reaches the maximum 
     floor. '''
-
-    # def default_time_adjuster(self, added_call):
-    #     counter = 1
-    #     if added_call.is_Up_call():  # going UP
-    #         floors = self.maxFloor - added_call.destFloor
-    #         if floors == 0:
-    #             time_to_add = 0
-    #         else:
-    #             time_to_add = ((floors * self.speed) + self.labor_time) / floors
-    #         for i in range(added_call.destFloor + 1, self.maxFloor + 1):
-    #             self.floor_timestamp_dict[i] = self.floor_timestamp_dict[added_call.destFloor] + (time_to_add * counter)
-    #             counter += 1
-    #     else:  # going DOWN
-    #         floors = self.maxFloor - self.minFloor
-    #         if floors == 0:
-    #             time_to_add = 0
-    #         else:
-    #             time_to_add = ((floors * self.speed) + self.labor_time) / floors
-    #         for i in range(added_call.destFloor - 1, self.minFloor - 1, -1):
-    #             self.floor_timestamp_dict[i] = self.floor_timestamp_dict[added_call.destFloor] + (time_to_add * counter)
-    #             counter += 1
 
     '''This function returns the given floor time-stamp.'''
 
