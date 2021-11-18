@@ -89,10 +89,22 @@ Class:
 
 
 ***
-After creating the adjuster for the elevator, the time updated itself until the last floor.
-What happens if at floor 10 the time is 134 and i get a call wanting to go down(or up) past that time. (ex call at 145).
-- I now need to ask if the call is after the finish time.
-- Because the list is pre-sorted, I now know that the next call is the next one up.
-- I need to switch the direction of the elevator and adjust the time accordingly.
-- If the call is DOWN and the timestamp is greater than the finish timestamp of the elevator, I know the elevator is going up.
-    I know now to add the labor time from the max-floor until the call origin floor and pick up the DOWN call.
+Fixing the Allocate problem:
+Problem:
+    The output puts all the calls in the elevator with the fastest speed and not by the best RELEVENT elevator.
+Why is it happening:
+    - Each time we choose an elevator, we then wipe all the elevators and reset the floor timestamp doct to 0.0.
+    - When we add new calls, we add the first call to 0.0, and then the algorith, will again say return the fastest elevator by it's speed.
+    - That causes all the calls to be placed in the fastest elevator by speed and cancels out all the other elevators.
+Fix:
+    - First we need to update the finish timestamp after each chosen elevator (DONE)
+    - Base Case: - The first group of calls were placed in e1 (DOWN calls) and now the finish timestamp is 20.37 at the minFloor.
+                 - The next call is at 16.95 (UP call).
+                 - It makes sense that e0 will take the call and NOT e1.
+                 - What is happening is that e1 is taking that call.
+    - We need to check what the Finish timestamp is.
+    - If the new call timestamp is less than an elevators finish timestamp then don't place any calls in that elevator.
+    - Place the calls in the other elevator which have a finish timestamp the is less than the calls timestamp.
+    - If we do NOT have an elevator that meets the condition then place it in the elevator based on the old allocate.
+
+

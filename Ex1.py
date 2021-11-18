@@ -1,46 +1,102 @@
 import pandas as pd
-from Call import *
 from Building import *
 
 
 def Ex1(Building_json, call_csv):
-    building_b = Building(Building_json)
-    elev_list = building_b.ElevatorList
-    call_file = make_df(call_csv)
+    building_b = Building(Building_json)# WORKS
+    elev_list = building_b.ElevatorList# WORKS
+    call_file = make_df(call_csv)# WORKS
     # call_file.to_csv("call_file", index=False)///////////////////////////////
-    size = len(call_file)
-    data = {'stam_str': [], 'timeStamp': [], 'src': [], 'dest': [], 'status': [], 'elevatorIndex': []}
-    output = pd.DataFrame(data)
+    size = len(call_file)# size = 100 # WORKS
+    data = {'stam_str': [], 'timeStamp': [], 'src': [], 'dest': [], 'status': [], 'elevatorIndex': []}# WORKS
+    output = pd.DataFrame(data)#  print empty output with the correct columns # WORKS
     # output.to_csv("call_file", index=False)///////////////////////////
-    while size != 0:
-        if building_b.elevatorAmount == 1:
-            output = pd.concat([call_file, output], ignore_index=True)
-            output = output.assign(elevatorIndex=0)
-            # output.to_csv("call_file", index=False)///////////////////
+    count = 0
+    while size != 0: # ENDLESS LOOP NEED TO FIX
+        print("\t\tThe current DataFrame size is:",size)
+        count += 1
+        print("\t\t\tIteration Number:",count)
+        if building_b.elevatorAmount == 1:# WORKS
+            print("\t\tElevator Amount = 1")
+            print("Create output with Elevator Index = 0")
+            output = pd.concat([call_file, output], ignore_index=True)# WORKS
+            output = output.assign(elevatorIndex=0)# WORKS
+            print(output)
             size = 0
         else:
-            first_call = Call(call_file.iloc[[0]].values[0])
+            first_call = Call(call_file.iloc[[0]].values[0])# WORKS
+            print("\nThe First Call:",first_call.__str__())
+            print("\n\t\tAdding the First Call to each Elevator\n")
             for i in elev_list:
+                dict_before_first_call = i.floor_timestamp_dict.copy()
                 i.addCall(first_call)
+                print("Adding First Call to elevator:", i.id)
+                print("Elevator call list:",[call.__str__() for call in i.callList])
             if first_call.status == 1:  # call is UP
+                print("\nThe First Call is an UP call from:",first_call.originFloor,"--->",first_call.destFloor,"\n")
                 temp_df = make_up(call_file.loc[1:])
+                print("\nThis is the Make_UP_df:", "First Call origin floor=", first_call.originFloor, "MaxFloor=", building_b.maxFloor)
+                print(temp_df)
                 for src in range(first_call.originFloor, building_b.maxFloor):
                     src_df = temp_df[temp_df['src'] == src]
+                    print("\nThis is the src_df:", "src=", src)
+                    print(src_df)
                     for e in elev_list:
-                        for i in range(1, len(src_df)):  # ///////////////////////////////////////
-                            curr_call = Call(src_df.iloc[[i]].values[0])
+                        print("\n\t\tLooping through the Building Elevator LIST\n")
+                        print("Elevator ID:", e.id)
+                        print("First Call:",first_call.__str__())
+                        print("Dictionary Before FIRST Call:", dict_before_first_call)
+                        print("Dictionary After FIRST Call:", e.floor_timestamp_dict,"\n")
+                        dict_Before_added_calls = e.floor_timestamp_dict.copy()
+                        for j in range(1, len(src_df)):  # ///////////////////////////////////////
+                            curr_call = Call(src_df.iloc[[j]].values[0])
+                            if curr_call.timeStamp > e.floor_timestamp_dict[e.maxFloor]:
+                                print("\nTHE NEXT CALLS TIMESTAMPS ARE GREATER THAN THE MAX-FLOOR TIMESTAMP. THEY ARE IRELEVANT\n")
+                                break
                             e.addCall(curr_call)
+                            print("Checking Call:", curr_call.__str__(), "to Elevator:", e.id)
+                        print("Current number of calls in Elevator",e.id,": ",e.callAmount)
+                        print("Added Calls:", [call.__str__() for call in e.callList])
+                        print("Dictionary BEFORE Added Calls:", dict_Before_added_calls)
+                        print("Dictionary AFTER Added Calls:", e.floor_timestamp_dict,"\n")
                 output = allocate_elev(elev_list, output, call_file)
+                print("\t\t\nThe OUTPUT is:\n")
+                print(output, "\n")
+                print("\nThe Chosen Elevator is:", output.iloc[[0]].values[0][5])
+                print("Current Dict:", elev_list[int(output.iloc[[0]].values[0][5])].floor_timestamp_dict, "\n\n")
                 size = len(call_file)
             else:  # call is DOWN
-                temp_df = make_down(call_file.loc[1:])
-                for src in range(first_call.originFloor, building_b.minFloor, -1):
-                    src_df = temp_df[temp_df['src'] == src]
+                print("\nThe First Call is a DOWN call from:",first_call.originFloor,"--->",first_call.destFloor,"\n")
+                temp_df = make_down(call_file.loc[1:])# WORKS
+                print("\nThis is the Make_DOWN_df:", "First Call origin floor=", first_call.originFloor, "MinFloor=", building_b.minFloor)
+                print(temp_df)
+                for src in range(first_call.originFloor, building_b.minFloor, -1):# WORKS
+                    src_df = temp_df[temp_df['src'] == src]# WORKS
+                    print("\nThis is the src_df:", "src=", src)
+                    print(src_df)
                     for e in elev_list:
+                        print("\n\t\tLooping through the Building Elevator LIST\n")
+                        print("Elevator ID:", e.id)
+                        print("First Call:", first_call.__str__())
+                        print("Dictionary Before FIRST Call:", dict_before_first_call)
+                        print("Dictionary After FIRST Call:", e.floor_timestamp_dict,"\n")
+                        dict_Before_added_calls = e.floor_timestamp_dict.copy()
                         for i in range(1, len(src_df)):
                             curr_call = Call(src_df.iloc[[i]].values[0])
+                            if curr_call.timeStamp > e.floor_timestamp_dict[e.minFloor]:
+                                print("\nTHE NEXT CALLS TIMESTAMPS ARE GREATER THAN THE MIN-FLOOR TIMESTAMP. THEY ARE IRELEVANT\n")
+                                break
                             e.addCall(curr_call)
+                            print("Checking Call:", curr_call.__str__(), "to Elevator:", e.id)
+                        print("Current number of calls in Elevator",e.id,": ",e.callAmount)
+                        print("Added Calls:", [call.__str__() for call in e.callList])
+                        print("Dictionary BEFORE Added Calls:", dict_Before_added_calls)
+                        print("Dictionary AFTER Added Calls:",e.floor_timestamp_dict,"\n")
                 output = allocate_elev(elev_list, output, call_file)
+                print("\t\t\nThe OUTPUT is:\n")
+                print(output,"\n")
+                print("\nThe Chosen Elevator is:",output.iloc[[0]].values[0][5])
+                print("Current Dict:",elev_list[int(output.iloc[[0]].values[0][5])].floor_timestamp_dict,"\n\n")
                 size = len(call_file)
     output["elevatorIndex"] = output['elevatorIndex'].astype(str).astype(float).astype(int)
     output["timeStamp"] = output['timeStamp'].astype(str).astype(float)
@@ -48,6 +104,35 @@ def Ex1(Building_json, call_csv):
     output["dest"] = output['dest'].astype(str).astype(float).astype(int)
     output["status"] = output['status'].astype(str).astype(float).astype(int)
     make_output(output, "output.csv")
+
+
+'''This function receives the elevator list and chooses the best elevator fir the calls.'''
+
+
+# //////////////////////////////// ctrl z untill this is removed/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def allocate_elev(elevator_list, output, call_file):
+    best = 0
+    min_time = calc_time(elevator_list[best])
+    try:
+        for i in range(0, len(elevator_list)):
+            if calc_time(elevator_list[i]) < min_time:
+                min_time = calc_time(elevator_list[i])
+                best = i
+    except TypeError:
+        print("empty list")
+    for i in range(0, len(elevator_list)):
+        if i != best:
+            wipe(elevator_list[i], "not_best")  # clear the elevator list and dictionary
+    addIndex(elevator_list[best])
+    output = send_to_output(elevator_list[best], output)
+    # update_call_file(call_file, elevator_list[best])
+    for call in elevator_list[best].callList:
+        update_call_file(call_file, call)
+    wipe(elevator_list[best], "best")
+    # print("Best: ", best, ". dict: ", elevator_list[best].floor_timestamp_dict)
+    return output
+
 
 '''This function calculates the average time of the passenger in the elevator (from src to dest)'''
 
@@ -58,35 +143,36 @@ def calc_time(elev):
         total_time = 0
         people = len(elev.callList)
         for call in call_list:
-            # print(call.__str__())
             total_time += (elev.floor_timestamp_dict[call.destFloor] - call.timeStamp)
-        return total_time / people
-
-'''This function receives the elevator list and chooses the best elevator fir the calls.'''
+        return float(total_time / people)
 
 
-def allocate_elev(elevator_list, output, call_file):
-    best = 0
-    min_time = calc_time(elevator_list[0])
-    # print(min_time, type(min_time))
-    for i in range(1, len(elevator_list)):
-        if calc_time(elevator_list[i]) < min_time:
-            min_time = calc_time(elevator_list[i])
-            best = i
-    for i in range(0, len(elevator_list)):
-        if i != best:
-            wipe(elevator_list[i])  # clear the elevator list and dictionary
-    addIndex(elevator_list[best])
-    output = send_to_output(elevator_list[best], output)
-    update_call_file(call_file, elevator_list[best])
-    # wipe(elevator_list[best])
-    return output
+'''This function clears the elevator list and resets the elevator timestamp dictionary.'''
 
 
-def update_call_file(call_file, curr_elev):
-    for call in curr_elev.callList:
-        ts = call.timeStamp
-        call_file.drop(call_file[call_file.timeStamp == ts].index, inplace=True)
+def wipe(elev, str):
+    if str == "best":
+        if len(elev.callList) != 0:
+            start = elev.callList[len(elev.callList) - 1].destFloor
+            for i in range(start + 1, elev.maxFloor + 1):
+                elev.floor_timestamp_dict[i] = elev.floor_timestamp_dict[i - 1] + elev.speed
+            for i in range(start - 1, elev.minFloor - 1, -1):
+                elev.floor_timestamp_dict[i] = elev.floor_timestamp_dict[i + 1] + elev.speed
+            elev.callList = []
+            elev.callAmount = 0
+    else:
+        elev.callList = []
+        elev.callAmount = 0
+        elev.floor_timestamp_dict = {index: x for index, x in enumerate([0.0] * elev.total_floors, start=elev.minFloor)}
+
+
+def update_call_file(call_file, call):
+    # for i in range(len(curr_elev.callList)):
+    #     ts = curr_elev.callList[i].timeStamp
+    #     call_file = call_file.drop(call_file[call_file.timeStamp == ts].index, inplace=True)
+    call_file = call_file.drop(call_file[call_file.timeStamp == call.timeStamp].index, inplace=True)
+    print("\n\n\t\tDropped From Main File Call:",call.__str__(),"\n\n")
+
 
 
 '''This function receives an elevator and creats the output DataFrame.'''
@@ -118,18 +204,6 @@ def elev_df(curr_elev):
         data['status'].append(call.status)
         data['elevatorIndex'].append(int(float(call.elevatorIndex)))
     return pd.DataFrame(data)
-
-
-'''This function clears the elevator list and resets the elevator timestamp dictionary.'''
-
-
-def wipe(curr_elev):
-    curr_elev.callList = []
-    curr_elev.floor_timestamp_dict = {index: x for index, x in
-                                      enumerate([0.0] * curr_elev.total_floors, start=curr_elev.minFloor)}
-
-
-
 
 
 '''This function creats a DataFrame from the call_csv.'''
