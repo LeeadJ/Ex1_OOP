@@ -37,9 +37,8 @@ Classes:
         - Finish Timestamp - The time the elevator will reach the minimum or maximum floor according to the direction.
         - Total Floors - total floors the elevator can reach.
         - TIMESTAMP DICTIONARY - This is a dictionary. Each key is a floor of the building and each key value holds the time
-                                  the elevator will reach the floor. This is the most important parameter of the elevator.
-                                  It allows the algorithm determine which elevator to call.
-            Functions:
+          the elevator will reach the floor. This is the most important parameter of the elevator. It allows the algorithm determine which elevator to call.
+   Functions:
    2.2) addCall(self, call):
             - This function adds a call to the elevator call list. It also updates the "Call amount" and "time-Adjuster.
    2.3) added_call_time_Adjuster(self, added_call):
