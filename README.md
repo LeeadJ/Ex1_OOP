@@ -22,8 +22,8 @@ Classes:
 2) elevator():
     - The elevator class receives information from the building and creates an elevator object.
    2.1) __init__() :  receives information from the Building class and initializes an elevator:
-            - Elevator ID (index in the elevator-list)
-            - Elevator Speed
+        - Elevator ID (index in the elevator-list)
+        - Elevator Speed
             - Minimum floor of the elevator.
             - Maximum floor of the elevator.
             - Door closing time.
