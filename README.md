@@ -24,21 +24,21 @@ Classes:
    2.1) __init__() :  receives information from the Building class and initializes an elevator:
         - Elevator ID (index in the elevator-list)
         - Elevator Speed
-            - Minimum floor of the elevator.
-            - Maximum floor of the elevator.
-            - Door closing time.
-            - Door opening time.
-            - Start time (time until the elevator reaches full speed).
-            - Stop time (time until elevator reaches a complete stop)
-                        Added parameters to the init:
-            - CallList - each elevator contains a list of calls that it will take.
-            - Call Amount - the amount of calls currently in the call list.
-            - Labor Time - the elevators of maintenance time (close,open,start,and stop times).
-            - Finish Timestamp - The time the elevator will reach the minimum or maximum floor according to the direction.
-            - Total Floors - total floors the elevator can reach.
-            - TIMESTAMP DICTIONARY - This is a dictionary. Each key is a floor of the building and each key value holds the time
-                                     the elevator will reach the floor. This is the most important parameter of the elevator.
-                                     It allows the algorithm determine which elevator to call.
+        - Minimum floor of the elevator.
+        - Maximum floor of the elevator.
+        - Door closing time.
+        - Door opening time.
+        - Start time (time until the elevator reaches full speed).
+        - Stop time (time until elevator reaches a complete stop)
+                     Added parameters to the init:
+        - CallList - each elevator contains a list of calls that it will take.
+        - Call Amount - the amount of calls currently in the call list.
+        - Labor Time - the elevators of maintenance time (close,open,start,and stop times).
+        - Finish Timestamp - The time the elevator will reach the minimum or maximum floor according to the direction.
+        - Total Floors - total floors the elevator can reach.
+        - TIMESTAMP DICTIONARY - This is a dictionary. Each key is a floor of the building and each key value holds the time
+                                  the elevator will reach the floor. This is the most important parameter of the elevator.
+                                  It allows the algorithm determine which elevator to call.
             Functions:
    2.2) addCall(self, call):
             - This function adds a call to the elevator call list. It also updates the "Call amount" and "time-Adjuster.
@@ -61,14 +61,14 @@ Classes:
 3) Call:  
     - The Call class receives a row from the call.csv and transforms it into an object called Call.
    3.1) __init__() :
-            - stam_str - A string containing the syntax 'Elevator Call'.
-            - Timestamp - The call timestamp.
-            - Origin Floor - The floor the call was made.
-            - Destination Floor - The destination of the floor.
-            - Status - The direction of the call. (UP of DOWN)
-            - Elevator Index - The index of the elevator taking the call (initialized as 0)
+        - stam_str - A string containing the syntax 'Elevator Call'.
+        - Timestamp - The call timestamp.
+        - Origin Floor - The floor the call was made.
+        - Destination Floor - The destination of the floor.
+        - Status - The direction of the call. (UP of DOWN)
+        - Elevator Index - The index of the elevator taking the call (initialized as 0)
     3.2) __str__() :
-            - Prints the information of the Call.
+        - Prints the information of the Call.
 
 4) Ex1:
     - This is the main class. The Class holds functions that help create the final DataFrame.
